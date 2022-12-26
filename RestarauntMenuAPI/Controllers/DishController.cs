@@ -10,12 +10,12 @@ namespace RestarauntMenuAPI.Controllers;
 [ProducesResponseType(StatusCodes.Status200OK)]
 public sealed class DishController : ControllerBase
 {
-	private readonly IDishService _dishService;
+    private readonly IDishService _dishService;
 
-	public DishController(IDishService dishService)
-	{
-		_dishService = dishService;
-	}
+    public DishController(IDishService dishService)
+    {
+        _dishService = dishService;
+    }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -24,14 +24,29 @@ public sealed class DishController : ControllerBase
         var dishAdded = await _dishService.AddAsync(dish);
 
         return CreatedAtRoute("GetDish",
-            new { dishAdded.Id, dishAdded.Price, dishAdded.Name, 
-                dishAdded.Cuisine, dishAdded.Ingredients, dishAdded.DishType }, dishAdded);
+            new
+            {
+                dishAdded.Id,
+                dishAdded.Price,
+                dishAdded.Name,
+                dishAdded.Cuisine,
+                dishAdded.Ingredients,
+                dishAdded.DishType
+            }, dishAdded);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDishesAsync()
+    public async Task<IActionResult> GetDishesAsync(bool orderByVotes)
     {
-        var dishesFromRepo = await _dishService.GetAsync();
+        var dishesFromRepo = await _dishService.GetAsync(orderByVotes);
+
+        return Ok(dishesFromRepo);
+    }
+
+    [HttpPost("list")]
+    public async Task<IActionResult> GetDishesWithoutIngridientsAsync([FromBody] List<string> ingridients)
+    {
+        var dishesFromRepo = await _dishService.GetDishesWithoutIngridientsAsync(ingridients);
 
         return Ok(dishesFromRepo);
     }

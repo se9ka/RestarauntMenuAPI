@@ -36,16 +36,11 @@ public sealed class DishService : IDishService
         return dish;
     }
 
-    public async Task<IEnumerable<DishEntity>> GetAsync(bool dishByVotesByDescending = false)
+    public async Task<IEnumerable<DishEntity>> GetAsync(bool dishByVotesByDescending)
     {
         var dishes = _context.Dishes.AsQueryable();
 
-        if (dishByVotesByDescending)
-        {
-            await dishes.OrderByDescending(e => e.Votes).ToListAsync();
-        }
-
-        return await dishes.ToListAsync();
+        return dishByVotesByDescending ? await dishes.OrderByDescending(e => e.Votes).ToListAsync() : await dishes.ToListAsync();
     }
 
     public async Task<DishEntity?> FindAsync(DishEntity dishEntity)
@@ -70,5 +65,14 @@ public sealed class DishService : IDishService
              .Where(dish => !dishEntity.Price.HasValue || dish.Price == dishEntity.Price)
              .Where(dish => dish.Id == dishEntity.Id)
              .AnyAsync();
+    }
+
+    public async Task<IEnumerable<DishEntity>> GetDishesWithoutIngridientsAsync(List<string> ingredients)
+    {
+        var dishes = await _context.Dishes.ToListAsync();
+
+        return dishes.Where(dish =>
+            !dish.Ingredients.Split(' ', ',').ToList().Any(ingredients.Contains)
+        ).ToList();
     }
 }

@@ -14,9 +14,9 @@ public sealed class DishEntity
     public decimal? Price { get; set; }
 
     public string? DishType { get; set; }
-                 
+
     public string? Cuisine { get; set; }
-                 
+
     public string? Ingredients { get; set; }
 
     public int? Votes { get; set; }
