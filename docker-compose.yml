@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+ restarauntServices:
+  image: restaraunt_service_image
+  restart: unless-stopped
+  container_name: RestarauntServiceContainer
+  build:
+   context: .
+   dockerfile: RestarauntMenuAPI/Dockerfile
+  environment: 
+  - ASPNETCORE_URLS:http://*:5173;https://*:7087;
+  ports:
+  - "8000:80"
+ sql-server-db:
+  container_name: mssqldb
+  restart: unless-stopped
+  image: mcr.microsoft.com/mssql/server:2022-latest
+  ports:
+    - "1433:1433"
+  environment:
+    SA_PASSWORD: "SomePassword1"
+    ACCEPT_EULA: "Y"
