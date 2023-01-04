@@ -67,12 +67,15 @@ public sealed class DishService : IDishService
              .AnyAsync();
     }
 
+  
     public async Task<IEnumerable<DishEntity>> GetDishesWithoutIngridientsAsync(List<string> ingredients)
     {
         var dishes = await _context.Dishes.ToListAsync();
 
+        ingredients = ingredients.Select(field => field.ToLower()).ToList();
+
         return dishes.Where(dish =>
-            !dish.Ingredients.Split(' ', ',').ToList().Any(ingredients.Contains)
+            !dish.Ingredients.ToLower().Split(' ', ',').ToList().Any(ingredients.Contains)
         ).ToList();
     }
 }
